@@ -1,16 +1,6 @@
-use std::thread::current;
-
 mod test;
 fn main() {
     println!("Hello, world!");
-}
-
-fn parse_single_number(input: &str) -> i32 {
-    let num = input.chars().collect::<Vec<_>>();
-    todo!()
-}
-pub fn is_operator(char: char) -> bool {
-    matches!(char, '+' | '-' | '/' | '*')
 }
 
 #[derive(Debug, PartialEq, Eq)]
