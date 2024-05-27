@@ -39,4 +39,32 @@ mod iterator_tests {
         let actual: Vec<Token> = TokenIterator::new(&data).collect();
         assert_eq!(expected, actual);
     }
+    #[test]
+    fn take_number() {
+        let data = vec!['2'];
+        let expected = vec![Token::NonOperator(2)];
+        let actual: Vec<Token> = TokenIterator::new(&data).collect();
+        assert_eq!(expected, actual);
+    }
+    #[test]
+    fn take_2_digit_number() {
+        let data = vec!['2', '0'];
+        let expected = vec![Token::NonOperator(20)];
+        let actual: Vec<Token> = TokenIterator::new(&data).collect();
+        assert_eq!(expected, actual);
+    }
+    #[test]
+    fn take_2_digit_number_with_preceding_addition() {
+        let data = vec!['+', '2', '0'];
+        let expected = vec![Token::Add, Token::NonOperator(20)];
+        let actual: Vec<Token> = TokenIterator::new(&data).collect();
+        assert_eq!(expected, actual);
+    }
+    #[test]
+    fn take_2_digit_number_with_preceding_subtraction() {
+        let data = vec!['-', '2', '0'];
+        let expected = vec![Token::Subtract, Token::NonOperator(20)];
+        let actual: Vec<Token> = TokenIterator::new(&data).collect();
+        assert_eq!(expected, actual);
+    }
 }

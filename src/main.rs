@@ -1,3 +1,5 @@
+use std::thread::current;
+
 mod test;
 fn main() {
     println!("Hello, world!");
@@ -40,22 +42,26 @@ impl Iterator for TokenIterator {
 
     fn next(&mut self) -> Option<Self::Item> {
         let current_index = self.index;
-        let characters_from_index = self.expression.split_at(current_index).1.iter();
-        let mut number_buffer = String::new();
-        for character in characters_from_index {
-            self.index += 1;
-            let token = match_operator_with_token(character);
-            if token.is_none() {
-                // is some number - accumulate
-                number_buffer = format!("{}{}", number_buffer, character);
-            } else {
-                return token;
-            }
-        }
-        if number_buffer.is_empty() {
-            None
+        let current_character = self.expression.get(self.index)?;
+
+        if current_character.is_numeric() {
+            //NOTE: This does NOT apply semantic meaning to the number, we don't know
+            //if it's positive or negative
+            // This is for the parsing stage
+            let conseq_numbers = self
+                .expression
+                .split_at(current_index)
+                .1
+                .iter()
+                .take_while(|it| it.is_numeric())
+                .collect::<String>();
+            self.index += conseq_numbers.len();
+            let number = conseq_numbers.parse::<i32>().unwrap();
+
+            Some(Token::NonOperator(number))
         } else {
-            Some(Token::NonOperator(number_buffer.parse().unwrap()))
+            self.index = current_index + 1;
+            match_operator_with_token(current_character)
         }
     }
 }
